@@ -10,6 +10,7 @@ export default class MyDocument extends Document {
               href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&display=swap"
               rel="stylesheet"
             />
+            <link rel="shortcut icon" href="/favicon.png" type="image/png" />
             <title>ig.News</title>
           </Head>
           <body>
