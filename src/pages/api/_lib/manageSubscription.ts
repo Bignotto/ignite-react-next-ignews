@@ -15,8 +15,6 @@ export async function saveSubscription(
     )
   );
 
-  console.log(userRef);
-
   const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 
   const subscriptionData = {
@@ -27,12 +25,10 @@ export async function saveSubscription(
   };
 
   if (createAction) {
-    console.log("nova assinatura");
     await fauna.query(
       q.Create(q.Collection("subscriptions"), { data: subscriptionData })
     );
   } else {
-    console.log("replace subscription");
     await fauna.query(
       q.Replace(
         q.Select(
