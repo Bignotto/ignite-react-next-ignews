@@ -1,12 +1,14 @@
-import { GetStaticProps } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
 
-import { getSession } from "next-auth/client";
+import { getSession, useSession } from "next-auth/client";
 import { RichText } from "prismic-dom";
 import { getPrismicClient } from "../../../services/prismic";
 
 import styles from "../post.module.scss";
 import Link from "next/link";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 interface PostPreviwProps {
   post: {
@@ -18,6 +20,15 @@ interface PostPreviwProps {
 }
 
 export default function PostPreview({ post }: PostPreviwProps) {
+  const [session] = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (session?.userActiveSubscription) {
+      router.push(`/posts/${post.slug}`);
+    }
+  }, [session]);
+
   return (
     <>
       <Head>
@@ -42,9 +53,30 @@ export default function PostPreview({ post }: PostPreviwProps) {
     </>
   );
 }
-export const getStaticPaths = () => {
+export const getStaticPaths: GetStaticPaths = async () => {
   return {
+    /*
+    For static generation in build.
+    Include slugs that should be generated in build process.
+
+    paths: [
+      {
+        params: {slug: 'here goes the slug'}
+      }
+    ],
+    */
     paths: [],
+
+    /**
+     * Fallback:
+     *
+     * "true": call server to get content from client brownser, causes layout shift, it will
+     * load page without content and then display content when ready
+     *
+     * "false": it it was not yet generated, returns 404
+     *
+     * "blocking": if content was not generated, next will generate it and then serve it to client
+     */
     fallback: "blocking",
   };
 };
