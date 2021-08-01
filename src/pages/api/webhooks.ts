@@ -33,7 +33,7 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
     let event: Stripe.Event;
     try {
       event = stripe.webhooks.constructEvent(
-        buf,
+        buf.toString(),
         secret,
         process.env.STRIPE_WEBHOOK_SECRET
       );
